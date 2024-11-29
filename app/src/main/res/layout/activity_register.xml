@@ -1,0 +1,112 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Provide your email and password to signup"
+        android:textStyle="bold"
+        android:layout_margin="20dp"
+        android:textSize="30sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Email ::"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_gravity="left"/>
+
+    <EditText
+        android:id="@+id/createAccountemail"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        android:hint="your email address"
+        android:inputType="textEmailAddress"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="First Name ::"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_gravity="left"/>
+
+    <EditText
+        android:id="@+id/FirstName"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        android:hint="given name"
+        android:inputType="textEmailAddress"
+        android:textSize="20sp"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Password ::"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_gravity="left"/>
+
+    <EditText
+        android:id="@+id/passwordcreatin"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        android:hint="password"
+        android:inputType="textPassword"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Confirm Password ::"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_gravity="left"/>
+
+    <EditText
+        android:id="@+id/Confirmpassword"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        android:hint="confirm password"
+        android:inputType="textPassword"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Role ::"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_gravity="left"/>
+
+    <Spinner
+        android:id="@+id/roleSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"/>
+
+    <Button
+        android:id="@+id/accountsubmitbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create"
+        android:layout_margin="20dp"/>
+
+    <TextView
+        android:id="@+id/backtoLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="already have an account:: LogIn"/>
+</LinearLayout>

@@ -4,71 +4,93 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    >
+    android:padding="16dp"
+    android:background="@android:color/white"
+    android:gravity="center_horizontal">
+
 
     <TextView
         android:id="@+id/Login"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:text="Access my account"
-        android:layout_marginTop="20dp"
-        android:textSize="20dp"
+        android:layout_height="wrap_content"
+        android:text="Access My Account"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
+        android:textSize="24sp"
         android:textStyle="bold"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:textColor="@android:color/black" />
+
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="200dp"
-        android:src="@drawable/splash"/>
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/page_flow"
+        android:layout_gravity="center"
+        android:layout_marginBottom="24dp" />
+
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center_horizontal">
 
         <EditText
             android:id="@+id/Email"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_margin="20dp"
-            android:hint="your email address"
+            android:layout_marginBottom="16dp"
+            android:hint=" Email Address"
             android:inputType="textEmailAddress"
-            android:textSize="20dp"
-            />
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp"
+            android:textSize="16sp" />
+
+
         <EditText
             android:id="@+id/password"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:hint="enter password"
+            android:layout_height="50dp"
+            android:layout_marginBottom="8dp"
+            android:hint="Enter Password"
             android:inputType="textPassword"
-            android:textSize="20dp"
-            />
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp"
+            android:textSize="16sp" />
+
 
         <TextView
             android:id="@+id/forgotpwd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="forgot password?"
-            android:layout_gravity="right"
-            android:layout_marginRight="10dp"
-            />
+            android:text="Forgot Password?"
+            android:layout_gravity="end"
+            android:layout_marginBottom="16dp"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="14sp" />
+
+
         <Button
             android:id="@+id/submitbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="16dp"
             android:text="Login"
-            android:textSize="24dp" />
+            android:textAllCaps="false"
+            android:background="@drawable/rounded_button"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
 
         <TextView
             android:id="@+id/newtolibrary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:text="New to PageFlow?.. Create One"
             android:layout_gravity="center"
-            android:layout_marginLeft="10dp"
-            />
+            android:layout_marginTop="16dp"
+            android:text="New to Library? Create One"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="14sp" />
     </LinearLayout>
 </LinearLayout>

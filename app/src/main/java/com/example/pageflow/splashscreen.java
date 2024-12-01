@@ -3,14 +3,10 @@ package com.example.pageflow;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.window.SplashScreen;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,9 +23,7 @@ public class splashscreen extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_splashscreen);
-
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -48,7 +42,7 @@ public class splashscreen extends AppCompatActivity {
                                 startActivity(intent);
                                 finish();
                             } else {
-                                Intent intent = new Intent(splashscreen.this,register.class);
+                                Intent intent = new Intent(splashscreen.this, dashboard.class);
                                 startActivity(intent);
                                 finish();
                             }
@@ -61,7 +55,7 @@ public class splashscreen extends AppCompatActivity {
 
                     });
                 } else {
-                    Intent i = new Intent(splashscreen.this, register.class);
+                    Intent i = new Intent(splashscreen.this, Login.class);
                     startActivity(i);
                     finish();
                 }
@@ -69,5 +63,3 @@ public class splashscreen extends AppCompatActivity {
         }, SPLASH_TIME_OUT);
     }
 }
-
-

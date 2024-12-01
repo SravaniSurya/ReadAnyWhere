@@ -11,9 +11,6 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class AddBookAdmin extends AppCompatActivity {
-
-
-
     private FirebaseAuth firebaseAuth;
 
     @Override

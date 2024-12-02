@@ -8,10 +8,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.pageflow.AdminDashboard;
+import com.example.pageflow.R;
+import com.example.pageflow.dashboard;
+import com.example.pageflow.register;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -26,24 +29,23 @@ import com.google.firebase.database.ValueEventListener;
 
 public class Login extends AppCompatActivity {
 
-    EditText Username, passwrd;
-    TextView tvforgotpasswrd, tvnewtopageflow;
+    EditText Uname, pwd;
+    TextView tvforgotpwd, tvnewtolibrary;
     Button button;
 
     FirebaseAuth mAuth;
     DatabaseReference mUsersDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
 
-
-        Username = findViewById(R.id.Email);
-        passwrd= findViewById(R.id.password);
+        Uname = findViewById(R.id.Email);
+        pwd = findViewById(R.id.password);
         button = findViewById(R.id.submitbutton);
-        tvforgotpasswrd = findViewById(R.id.forgotpwd);
-        tvnewtopageflow = findViewById(R.id.newtolibrary);
+        tvforgotpwd = findViewById(R.id.forgotpwd);
+        tvnewtolibrary = findViewById(R.id.newtolibrary);
         mAuth = FirebaseAuth.getInstance();
         mUsersDatabase = FirebaseDatabase.getInstance().getReference("users");
 
@@ -54,7 +56,7 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        tvforgotpasswrd.setOnClickListener(new View.OnClickListener() {
+        tvforgotpwd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent forgotpassword = new Intent(Login.this, ForgotPassword.class);
@@ -63,19 +65,19 @@ public class Login extends AppCompatActivity {
             }
         });
 
-        tvnewtopageflow.setOnClickListener(new View.OnClickListener() {
+        tvnewtolibrary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent register = new Intent(Login.this, register.class);
-                startActivity(register);
+                Intent Accountcreationpage = new Intent(Login.this, register.class);
+                startActivity(Accountcreationpage);
                 finish();
             }
         });
     }
 
     private void userlogin() {
-        String emailadd = Username.getText().toString();
-        String passcode = passwrd.getText().toString();
+        String emailadd = Uname.getText().toString();
+        String passcode = pwd.getText().toString();
         DatabaseReference reference = FirebaseDatabase.getInstance()
                 .getReference("users");
 
@@ -127,5 +129,3 @@ public class Login extends AppCompatActivity {
         });
     }
 }
-
-

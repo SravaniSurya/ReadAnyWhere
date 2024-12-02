@@ -15,6 +15,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import javax.security.auth.login.LoginException;
+
 public class splashscreen extends AppCompatActivity {
 
     private static final int SPLASH_TIME_OUT = 3000;
@@ -55,7 +57,7 @@ public class splashscreen extends AppCompatActivity {
 
                     });
                 } else {
-                    Intent i = new Intent(splashscreen.this, Login.class);
+                    Intent i = new Intent(splashscreen.this,Login.class);
                     startActivity(i);
                     finish();
                 }

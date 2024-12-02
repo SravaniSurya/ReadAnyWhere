@@ -1,80 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddBookAdmin">
+    android:padding="16dp"
+    android:background="@android:color/white">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp">
-
-        <ImageButton
-            android:id="@+id/backbtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"/>
-
-
-        <ImageButton
-            android:id="@+id/IconIv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:src="@drawable/page_flow"/>
-
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/IconIv"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:text="add a new category"
-            android:textColor="@color/black"
-            android:textSize="28sp"/>
-
-
-
-
-
-
-    </RelativeLayout>
-
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/categorytil"
-        app:hintEnabled="false"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginTop="225dp">
+            android:text="Add a New Book"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp" />
 
         <EditText
-            android:id="@+id/categoryedt"
+            android:id="@+id/edTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="category title "
-            android:inputType="textPersonName|textCapWords"
-            android:textColor="@color/black"/>
+            android:hint="Enter Book Title"
+            android:inputType="text"
+            android:textSize="18sp"
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp" />
 
 
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <Button
-        android:id="@+id/submitbtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="28dp"
-        android:text="submit"
-        android:textColor="@color/white"/>
+        <EditText
+            android:id="@+id/edAuthor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Author Name"
+            android:inputType="text"
+            android:textSize="18sp"
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp" />
 
 
-</RelativeLayout>
+        <EditText
+            android:id="@+id/languages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Languages"
+            android:inputType="text"
+            android:textSize="18sp"
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp" />
+
+
+        <EditText
+            android:id="@+id/genere"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Genre"
+            android:inputType="text"
+            android:textSize="18sp"
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp" />
+
+
+        <EditText
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter Image URL"
+            android:inputType="textUri"
+            android:textSize="18sp"
+            android:background="@drawable/rounded_edittext"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp" />
+
+
+        <CheckBox
+            android:id="@+id/checkboxAvailable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Book Available"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonAddEdit"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:text="Add Book"
+                android:textAllCaps="false"
+                android:background="@drawable/rounded_button"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/buttonBack"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:text="Back"
+                android:textAllCaps="false"
+                android:background="@drawable/rounded_button"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

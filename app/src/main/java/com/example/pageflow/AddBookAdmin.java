@@ -7,24 +7,28 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+
 public class AddBookAdmin extends AppCompatActivity {
 
-    private EditText eTitle, eAuthor, elanguage, egenere, eimage;
-    private CheckBox boxAvailable;
-    private Button buttonAdd, buttonBack;
-    private DatabaseReference booksDatabase;
-    private String bookId;
+    private ImageButton backBtn;
+    private EditText categoryEt;
+    private Button submitBtn;
+
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,92 +36,54 @@ public class AddBookAdmin extends AppCompatActivity {
         setContentView(R.layout.activity_add_book_admin);
 
 
-        eTitle = findViewById(R.id.edTitle);
-        eAuthor = findViewById(R.id.edAuthor);
-        elanguage = findViewById(R.id.language);
-        egenere = findViewById(R.id.genere);
-        eimage = findViewById(R.id.image);
-        boxAvailable = findViewById(R.id.checkboxAvailable);
-
-        buttonAdd = findViewById(R.id.buttonAddEdit);
-        buttonBack = findViewById(R.id.buttonBack);
+        backBtn = findViewById(R.id.backBtn);
+                categoryEt = findViewById(R.id.categoryEt);
+                submitBtn = findViewById(R.id.submitBtn);
 
 
-        booksDatabase = FirebaseDatabase.getInstance().getReference("books");
+                firebaseAuth = FirebaseAuth.getInstance();
 
 
-        bookId = getIntent().getStringExtra("bookId");
-        if (bookId != null) {
-            setTitle("Edit Book");
-            buttonAdd.setText("Edit");
-            loadBookDetails();
-        } else {
-            setTitle("Add Book");
-        }
+                backBtn.setOnClickListener(v -> onBackPressed());
 
-
-        buttonBack.setOnClickListener(view -> finish());
-
-        buttonAdd.setOnClickListener(v -> {
-            String title = eTitle.getText().toString().trim();
-            String author = eAuthor.getText().toString().trim();
-            String language = elanguage.getText().toString().trim();
-            String genere = egenere.getText().toString().trim();
-            String image = eimage.getText().toString().trim();
-            boolean isAvailable = boxAvailable.isChecked();
-
-
-            if (bookId != null) {
-                updateBook(title, author, language, genere, image, isAvailable);
-            } else {
-                addBook(title, author, language, genere, image, isAvailable);
+                submitBtn.setOnClickListener(v -> validateAndAddCategory());
             }
-        });
-    }
 
-    private void loadBookDetails() {
-        booksDatabase.child(bookId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    eTitle.setText(snapshot.child("title").getValue(String.class));
-                    eAuthor.setText(snapshot.child("author").getValue(String.class));
-                    elanguage.setText(snapshot.child("language").getValue(String.class));
-                    egenere.setText(snapshot.child("genere").getValue(String.class));
-                    eimage.setText(snapshot.child("image").getValue(String.class));
-                    boxAvailable.setChecked(snapshot.child("isAvailable").getValue(Boolean.class));
+            private void validateAndAddCategory() {
+
+                String category = categoryEt.getText().toString().trim();
+
+
+                if (TextUtils.isEmpty(category)) {
+                    Toast.makeText(this, "Please enter a category!", Toast.LENGTH_SHORT).show();
+                } else {
+                    addCategoryToFirebase(category);
                 }
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(AddBookAdmin.this, "Failed to load book details", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+            private void addCategoryToFirebase(String category) {
 
-    private void addBook(String title, String author, String language, String genere, String image, Boolean isAvailable) {
-        String id = booksDatabase.push().getKey();
-        book book = new book(id, title, author, language, genere, image, isAvailable);
-        booksDatabase.child(id).setValue(book).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Toast.makeText(AddBookAdmin.this, "Book added successfully", Toast.LENGTH_SHORT).show();
-                finish();
-            } else {
-                Toast.makeText(AddBookAdmin.this, "Failed to add book", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+                long timestamp = System.currentTimeMillis();
 
-    private void updateBook(String title, String author, String language, String genere, String image, boolean isAvailable) {
-        book book = new book(bookId, title, author, language, genere, image, isAvailable);
-        booksDatabase.child(bookId).setValue(book).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Toast.makeText(AddBookAdmin.this, "Book updated successfully", Toast.LENGTH_SHORT).show();
-                finish();
-            } else {
-                Toast.makeText(AddBookAdmin.this, "Failed to update book", Toast.LENGTH_SHORT).show();
+
+                HashMap<String, Object> categoryData = new HashMap<>();
+                categoryData.put("id", String.valueOf(timestamp));
+                categoryData.put("category", category);
+                categoryData.put("timestamp", timestamp);
+                categoryData.put("uid", firebaseAuth.getUid());
+
+
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
+                ref.child(String.valueOf(timestamp))
+                        .setValue(categoryData)
+                        .addOnSuccessListener(unused -> {
+
+                            Toast.makeText(AddBookAdmin.this, "Category added successfully!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        })
+                        .addOnFailureListener(e -> {
+
+                            Toast.makeText(AddBookAdmin.this, "Failed to add category: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        });
             }
-        });
-    }
-}
+        }

@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +25,7 @@ public class AdminDashboard extends AppCompatActivity {
 
     private EditText searchEt;
     private RecyclerView categoriesRv;
+    private ImageButton profileBtn;
 
     private FirebaseAuth firebaseAuth;
 
@@ -36,11 +39,21 @@ public class AdminDashboard extends AppCompatActivity {
 
         searchEt = findViewById(R.id.searchEt);
         categoriesRv = findViewById(R.id.categoriesRv);
+        profileBtn = findViewById(R.id.profileBtn);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
         checkUser();
         loadCategories();
+
+
+        profileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                startActivity(new Intent(AdminDashboard.this, ProfileActivity.class));
+            }
+        });
 
         findViewById(R.id.addCategoryBtn).setOnClickListener(v -> {
             startActivity(new Intent(AdminDashboard.this, AddBookAdmin.class));

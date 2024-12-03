@@ -13,21 +13,21 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class AdminDashboard extends AppCompatActivity {
 
-    Button addcategorybtn;
+    Button addbookbutton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_admin_dashboard);
-
-
-        addcategorybtn.setOnClickListener(new View.OnClickListener() {
+        addbookbutton = findViewById(R.id.addbook);
+        addbookbutton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                startActivity(new Intent(AdminDashboard.this,AddBookAdmin.class));
+            public void onClick(View view) {
+                Intent intent = new Intent(AdminDashboard.this, AddBookAdmin.class);
+                startActivity(intent);
             }
         });
+    }
 
     }
-}

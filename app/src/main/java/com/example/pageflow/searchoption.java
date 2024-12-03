@@ -1,38 +1,37 @@
 package com.example.pageflow;
 
 import android.widget.Filter;
-
 import java.util.ArrayList;
 
 public class searchoption extends Filter {
 
     private ArrayList<book> originalList;
-    private bookadaptermodel adapterCategory;
+    private bookadaptermodel adapter;
 
-
-    public searchoption(ArrayList<book> originalList, bookadaptermodel adapterCategory) {
+    public searchoption(ArrayList<book> originalList, bookadaptermodel adapter) {
         this.originalList = originalList;
-        this.adapterCategory = adapterCategory;
+        this.adapter = adapter;
     }
+
 
     @Override
     protected FilterResults performFiltering(CharSequence constraint) {
         FilterResults results = new FilterResults();
 
-
         if (constraint != null && constraint.length() > 0) {
             ArrayList<book> filteredList = new ArrayList<>();
 
 
-            for (book bookItem : originalList) {
-                if (bookItem.getTitle().contains(constraint)) {
-                    filteredList.add(bookItem);
+            for (int i = 0; i < originalList.size(); i++) {
+                book item = originalList.get(i);
+                if (item.getCategory() != null && item.getCategory().contains(constraint)) {
+                    filteredList.add(item);
                 }
             }
 
             results.values = filteredList;
             results.count = filteredList.size();
-
+        } else {
             results.values = originalList;
             results.count = originalList.size();
         }
@@ -40,11 +39,10 @@ public class searchoption extends Filter {
         return results;
     }
 
+
     @Override
     protected void publishResults(CharSequence constraint, FilterResults results) {
-
-        adapterCategory.categoryArrayList = (ArrayList<book>) results.values;
-
-        adapterCategory.notifyDataSetChanged();
+        adapter.categoryArrayList = (ArrayList<book>) results.values;
+        adapter.notifyDataSetChanged();
     }
 }

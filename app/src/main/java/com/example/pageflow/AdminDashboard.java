@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,7 +26,7 @@ public class AdminDashboard extends AppCompatActivity {
 
     private EditText searchEt;
     private RecyclerView categoriesRv;
-    private ImageButton profileBtn;
+    private ImageButton profileBtn, logoutBtn;
 
     private FirebaseAuth firebaseAuth;
 
@@ -40,6 +41,7 @@ public class AdminDashboard extends AppCompatActivity {
         searchEt = findViewById(R.id.searchEt);
         categoriesRv = findViewById(R.id.categoriesRv);
         profileBtn = findViewById(R.id.profileBtn);
+        logoutBtn = findViewById(R.id.logoutBtn);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -50,19 +52,29 @@ public class AdminDashboard extends AppCompatActivity {
         profileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 startActivity(new Intent(AdminDashboard.this, ProfileActivity.class));
             }
         });
+
+        logoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                firebaseAuth.signOut();
+                Toast.makeText(AdminDashboard.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(AdminDashboard.this, Login.class));
+                finish();
+            }
+        });
+
 
         findViewById(R.id.addCategoryBtn).setOnClickListener(v -> {
             startActivity(new Intent(AdminDashboard.this, AddBookAdmin.class));
         });
 
+
         searchEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -74,7 +86,6 @@ public class AdminDashboard extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
     }
@@ -100,7 +111,6 @@ public class AdminDashboard extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }

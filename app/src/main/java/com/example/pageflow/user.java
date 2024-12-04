@@ -1,21 +1,36 @@
 package com.example.pageflow;
 
 public class user {
-    public String userId;
-    public String firstName;
 
-    public String email;
-    public String role;
+    private String userId;
+    private String firstName;
+    private String email;
+    private String role;
+    private String profileImageUrl;
+    private String photoUrl;
 
-    public user(String firstName,  String email, String role) {
+
+    public user() {
+    }
+
+
+    public user(String firstName, String email, String role, String profileImageUrl,String photoUrl) {
         this.firstName = firstName;
         this.email = email;
         this.role = role;
+        this.profileImageUrl = profileImageUrl;
+        this.photoUrl = photoUrl;
+
+    }
+    public user(String firstName, String email, String role) {
+        this.firstName = firstName;
+        this.email = email;
+        this.role = role;
+        this.profileImageUrl = "";
+        this.photoUrl = "";
     }
 
-    public user(){
 
-    }
 
     public String getUserId() {
         return userId;
@@ -48,6 +63,20 @@ public class user {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
+public String getPhotoUrl() {
+    return photoUrl;
 }
 
-
+public void setPhotoUrl(String photoUrl) {
+    this.photoUrl = photoUrl;
+}
+}

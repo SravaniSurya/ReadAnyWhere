@@ -10,8 +10,8 @@
     <ImageView
         android:id="@+id/splashscreen"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/page_flow"/>
+        android:layout_height="match_parent"
+        android:src="@drawable/page_flow" />
 
 
 </LinearLayout>

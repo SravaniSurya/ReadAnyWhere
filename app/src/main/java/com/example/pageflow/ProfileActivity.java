@@ -41,7 +41,6 @@ public class ProfileActivity extends AppCompatActivity {
         memberDateTv = findViewById(R.id.memberDateTv);
         profileIv = findViewById(R.id.profileIv);
 
-
         firebaseAuth = FirebaseAuth.getInstance();
 
 
@@ -54,6 +53,12 @@ public class ProfileActivity extends AppCompatActivity {
         profileEditBtn.setOnClickListener(v -> startActivity(new Intent(ProfileActivity.this, ProfileEditActivity.class)));
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadUserInfo();
+    }
+
     private void loadUserInfo() {
         String uid = firebaseAuth.getUid();
         if (uid == null) {
@@ -61,14 +66,14 @@ public class ProfileActivity extends AppCompatActivity {
             return;
         }
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
         ref.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String name = "" + snapshot.child("name").getValue();
-                String profileImage = "" + snapshot.child("profileImage").getValue();
+                String name = "" + snapshot.child("firstName").getValue();
+                String profileImage = "" + snapshot.child("photoUrl").getValue();
                 String timestamp = "" + snapshot.child("timestamp").getValue();
-                String userType = "" + snapshot.child("userType").getValue();
+                String userType = "" + snapshot.child("role").getValue();
 
                 String formattedDate = "N/A";
                 if (timestamp != null && !timestamp.isEmpty() && !timestamp.equals("null")) {
@@ -76,7 +81,6 @@ public class ProfileActivity extends AppCompatActivity {
                         long timestampLong = Long.parseLong(timestamp);
                         formattedDate = formatTimestamp(timestampLong);
                     } catch (NumberFormatException e) {
-                        e.printStackTrace();
                         formattedDate = "Invalid Date";
                     }
                 }

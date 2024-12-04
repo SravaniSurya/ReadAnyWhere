@@ -11,10 +11,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.pageflow.AdminDashboard;
-import com.example.pageflow.R;
-import com.example.pageflow.dashboard;
-import com.example.pageflow.register;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;

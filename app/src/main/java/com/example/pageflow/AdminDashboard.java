@@ -26,10 +26,9 @@ public class AdminDashboard extends AppCompatActivity {
 
     private EditText searchEt;
     private RecyclerView categoriesRv;
-    private ImageButton profileBtn, logoutBtn;
+    private ImageButton profileBtn, logoutBtn, addPdfBtn;
 
     private FirebaseAuth firebaseAuth;
-
     private ArrayList<book> categoryArrayList;
     private bookadaptermodel adapterCategory;
 
@@ -42,35 +41,23 @@ public class AdminDashboard extends AppCompatActivity {
         categoriesRv = findViewById(R.id.categoriesRv);
         profileBtn = findViewById(R.id.profileBtn);
         logoutBtn = findViewById(R.id.logoutBtn);
+        addPdfBtn = findViewById(R.id.addPdfFab);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
         checkUser();
         loadCategories();
 
+        profileBtn.setOnClickListener(view -> startActivity(new Intent(AdminDashboard.this, ProfileActivity.class)));
 
-        profileBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(AdminDashboard.this, ProfileActivity.class));
-            }
+        logoutBtn.setOnClickListener(view -> {
+            firebaseAuth.signOut();
+            Toast.makeText(AdminDashboard.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(AdminDashboard.this, Login.class));
+            finish();
         });
 
-        logoutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                firebaseAuth.signOut();
-                Toast.makeText(AdminDashboard.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(AdminDashboard.this, Login.class));
-                finish();
-            }
-        });
-
-
-        findViewById(R.id.addCategoryBtn).setOnClickListener(v -> {
-            startActivity(new Intent(AdminDashboard.this, AddBookAdmin.class));
-        });
-
+        addPdfBtn.setOnClickListener(view -> startActivity(new Intent(AdminDashboard.this, addpdf.class)));
 
         searchEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -107,6 +94,16 @@ public class AdminDashboard extends AppCompatActivity {
 
                 adapterCategory = new bookadaptermodel(AdminDashboard.this, categoryArrayList);
                 categoriesRv.setAdapter(adapterCategory);
+
+                // Set click listener for categories
+                adapterCategory.setOnItemClickListener(new bookadaptermodel.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(book model) {
+                        Intent intent = new Intent(AdminDashboard.this, pdflistadmin.class);
+                        intent.putExtra("categoryId", model.getId());
+                        startActivity(intent);
+                    }
+                });
             }
 
             @Override

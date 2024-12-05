@@ -6,6 +6,7 @@ public class book {
     private String uid;
     private long timestamp;
 
+
     public book() {
 
     }
@@ -15,6 +16,7 @@ public class book {
         this.category = category;
         this.uid = uid;
         this.timestamp = timestamp;
+
     }
 
     public String getId() {
@@ -48,4 +50,6 @@ public class book {
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
+
+
 }

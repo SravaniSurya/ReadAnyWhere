@@ -2,6 +2,7 @@ package com.example.pageflow;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,19 @@ public class bookadaptermodel extends RecyclerView.Adapter<bookadaptermodel.View
 
     private searchoption filter;
 
+    // Listener for item clicks
+    private OnItemClickListener listener;
+
+    // Interface for click events
+    public interface OnItemClickListener {
+        void onItemClick(book model);
+    }
+
+    // Set the listener
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
     public bookadaptermodel(Context context, ArrayList<book> categoryArrayList) {
         this.context = context;
         this.categoryArrayList = categoryArrayList;
@@ -48,6 +62,7 @@ public class bookadaptermodel extends RecyclerView.Adapter<bookadaptermodel.View
 
         holder.categoryTv.setText(title != null && !title.isEmpty() ? title : "No Title Available");
 
+        // Set click listener for delete button
         holder.deleteBtn.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle("Delete")
@@ -55,6 +70,13 @@ public class bookadaptermodel extends RecyclerView.Adapter<bookadaptermodel.View
                     .setPositiveButton("Confirm", (dialog, which) -> deleteBook(model))
                     .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                     .show();
+        });
+
+        // Set item click listener
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(model);
+            }
         });
     }
 

@@ -43,21 +43,21 @@ public class BookAdapterAdmin extends RecyclerView.Adapter<BookAdapterAdmin.Hold
         String pdfUrl = model.getUrl();
         long timestamp = model.getTimestamp();
 
-        // Format timestamp to date
+
         String formattedDate = myapplication.formatTimestamp(timestamp);
 
-        // Set data to views
+
         holder.titleTv.setText(title);
         holder.descriptionTv.setText(description);
         holder.dateTv.setText(formattedDate);
 
-        // Load category
+
         myapplication.loadCategory("" + categoryId, holder.categoryTv);
 
-        // Handle more options click
+
         holder.moreBtn.setOnClickListener(v -> moreOptionsDialog(model));
 
-        // Handle item click for PDF details
+
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, pdfdetailedactivity.class);
             intent.putExtra("bookId", pdfId);
@@ -70,14 +70,14 @@ public class BookAdapterAdmin extends RecyclerView.Adapter<BookAdapterAdmin.Hold
         String bookUrl = model.getUrl();
         String bookTitle = model.getTitle();
 
-        // Options to show in dialog
+
         String[] options = {"Edit", "Delete"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose Option")
                 .setItems(options, (dialog, which) -> {
                     if (which == 0) {
-                        // Edit option
+
                         Intent intent = new Intent(context, pdfeditactivity.class);
                         intent.putExtra("bookId", bookId);
                         context.startActivity(intent);
@@ -93,7 +93,7 @@ public class BookAdapterAdmin extends RecyclerView.Adapter<BookAdapterAdmin.Hold
         return pdfArrayList.size();
     }
 
-    // ViewHolder class for row_pdf_admin.xml
+
     class HolderPdfAdmin extends RecyclerView.ViewHolder {
         ProgressBar progressBar;
         TextView titleTv, descriptionTv, categoryTv, dateTv;

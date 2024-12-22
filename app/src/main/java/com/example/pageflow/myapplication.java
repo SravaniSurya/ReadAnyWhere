@@ -1,6 +1,8 @@
 package com.example.pageflow;
 
+
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Environment;
 import android.text.format.DateFormat;
@@ -9,14 +11,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.database.ValueEventListener;
-
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,80 +28,126 @@ import java.util.Locale;
 
 public class myapplication extends Application {
 
-        @Override
-        public void onCreate() {
-            super.onCreate();
-        }
+    private static final String TAG_DOWNLOAD = "DOWNLOAD_TAG";
 
-        // Format timestamp into a readable date
-        public static final String formatTimestamp(long timestamp) {
-            Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-            cal.setTimeInMillis(timestamp);
-            return DateFormat.format("dd/MM/yyyy", cal).toString();
-        }
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
 
-        // Delete a book from Firebase
-        public static void deleteBook(Context context, String bookId, String bookUrl, String bookTitle) {
-            // Notify user about the deletion start
-            Toast.makeText(context, "Deleting " + bookTitle + "...", Toast.LENGTH_SHORT).show();
+    public static final String formatTimestamp(long timestamp){
+        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
+        cal.setTimeInMillis(timestamp);
+        String date = DateFormat.format("dd/MM/yyyy", cal).toString();
 
-            StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(bookUrl);
-            storageReference.delete()
-                    .addOnSuccessListener(unused -> {
+        return date;
+    }
+
+    public static void deleteBook(Context context, String bookId, String bookUrl, String bookTitle) {
+        ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setTitle("Please wait");
+        progressDialog.setMessage("Deleting "+bookTitle+" ...");
+        progressDialog.show();
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(bookUrl);
+        storageReference.delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Books");
                         reference.child(bookId)
                                 .removeValue()
-                                .addOnSuccessListener(unused1 -> Toast.makeText(context, "Book deleted successfully", Toast.LENGTH_SHORT).show())
-                                .addOnFailureListener(e -> Toast.makeText(context, "Failed to delete book: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(context, "Failed to delete file: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-        }
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(context, "Book Deleted Successfully...", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(context, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
 
-        // Load category name into a TextView
-        public static void loadCategory(String categoryId, TextView categoryTv) {
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
-            ref.child(categoryId)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            String category = "" + snapshot.child("category").getValue();
-                            categoryTv.setText(category);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            Toast.makeText(categoryTv.getContext(), "Failed to load category", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
-
-        // Download a book and save to local storage
-        public static void downloadBook(Context context, String bookTitle, String bookUrl) {
-            String nameWithExtension = bookTitle + ".pdf";
-            Toast.makeText(context, "Downloading " + nameWithExtension, Toast.LENGTH_SHORT).show();
-
-            StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(bookUrl);
-            storageReference.getBytes(50000000) // Adjust size as needed
-                    .addOnSuccessListener(bytes -> saveDownloadedBook(context, bytes, nameWithExtension))
-                    .addOnFailureListener(e -> Toast.makeText(context, "Failed to download: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-        }
-
-        // Save downloaded book to local storage
-        private static void saveDownloadedBook(Context context, byte[] bytes, String nameWithExtension) {
-            try {
-                File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                downloadsFolder.mkdirs();
-
-                String filePath = downloadsFolder.getPath() + "/" + nameWithExtension;
-                FileOutputStream out = new FileOutputStream(filePath);
-                out.write(bytes);
-                out.close();
-
-                Toast.makeText(context, "Saved to Downloads Folder", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                Toast.makeText(context, "Failed to save file: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull  Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(context, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
 
+    public static void loadCategory(String categoryId, TextView categoryTv) {
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
+        ref.child(categoryId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String category = ""+snapshot.child("category").getValue();
+
+                        categoryTv.setText(category);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+    }
+
+    public static void downloadBook(Context context, String bookTitle, String bookUrl){
+
+        String nameWithExtension = bookTitle + ".pdf";
+
+        ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setTitle("Please wait");
+        progressDialog.setMessage("Downloading "+ nameWithExtension +"...");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(bookUrl);
+        storageReference.getBytes(50000000)
+                .addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        saveDownloadedBook(context, progressDialog, bytes, nameWithExtension);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(context, "Failed to download due to "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private static void saveDownloadedBook(Context context, ProgressDialog progressDialog, byte[] bytes, String nameWithExtension) {
+        try {
+            File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            downloadsFolder.mkdirs();
+
+            String filePath = downloadsFolder.getPath() + "/" + nameWithExtension;
+
+            FileOutputStream out = new FileOutputStream(filePath);
+            out.write(bytes);
+            out.close();
+
+            Toast.makeText(context, "Saved to Download Folder", Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
+        }
+        catch (Exception e){
+            Toast.makeText(context, "Failed saving to Download Folder due to "+e.getMessage(), Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
+        }
+    }
+
+}

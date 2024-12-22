@@ -46,32 +46,11 @@ public class AdminDashboard extends AppCompatActivity {
 
         checkUser();
         loadCategories();
+        profileBtn.setOnClickListener(view -> startActivity(new Intent(AdminDashboard.this, ProfileActivity.class)));
 
         findViewById(R.id.addCategoryBtn).setOnClickListener(v -> {
             startActivity(new Intent(AdminDashboard.this, AddBookAdmin.class));
         });
-
-        searchEt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (adapterCategory != null) {
-                    adapterCategory.getFilter().filter(s);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-
-        profileBtn.setOnClickListener(view -> startActivity(new Intent(AdminDashboard.this, ProfileActivity.class)));
 
 
         findViewById(R.id.addPdfFab).setOnClickListener(new View.OnClickListener() {
@@ -102,6 +81,7 @@ public class AdminDashboard extends AppCompatActivity {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     book model = ds.getValue(book.class);
                     if (model != null) {
+                        model.setUuid(ds.getKey()); // Set the Firebase key as uuid
                         categoryArrayList.add(model);
                     }
                 }

@@ -1,5 +1,6 @@
 package com.example.pageflow;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 public class addpdf extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
+    private ProgressDialog progressDialog;
     private ArrayList<String> categoryTitleArrayList, categoryIdArrayList;
     private Uri pdfUri = null;
 
@@ -46,13 +48,40 @@ public class addpdf extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         loadPdfCategories();
 
-        findViewById(R.id.backBtn).setOnClickListener(v -> onBackPressed());
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Please wait");
+        progressDialog.setCanceledOnTouchOutside(false);
 
-        findViewById(R.id.attachBtn).setOnClickListener(v -> pdfPickIntent());
+        findViewById(R.id.backBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
-        findViewById(R.id.categoryTv).setOnClickListener(v -> categoryPickDialog());
+        findViewById(R.id.attachBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pdfPickIntent();
+            }
+        });
 
-        findViewById(R.id.submitBtn).setOnClickListener(v -> checkData());
+        findViewById(R.id.categoryTv)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        categoryPickDialog();
+                    }
+                });
+
+        findViewById(R.id.submitBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkData();
+            }
+        });
+
+
     }
 
     private String title = "";
@@ -72,30 +101,56 @@ public class addpdf extends AppCompatActivity {
     }
 
     private void uploadPdfToStorage() {
-        long timestamp = System.currentTimeMillis();
-        String filePathAndName = "Books/" + timestamp;
+        progressDialog.setMessage("Uploading Pdf...");
+        progressDialog.show();
 
+        long timestamp = System.currentTimeMillis();
+
+        String filePathAndName = "Books/" + timestamp;
         StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathAndName);
         storageReference.putFile(pdfUri)
-                .addOnSuccessListener(taskSnapshot -> {
-                    Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                    while (!uriTask.isSuccessful()) ;
-                    String uploadedPdfUrl = "" + uriTask.getResult();
-                    uploadPdfInfoToDb(title, uploadedPdfUrl, timestamp);
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                        while (!uriTask.isSuccessful()) ;
+                        String uploadedPdfUrl = "" + uriTask.getResult();
+                        uploadPdfInfoToDb(title, uploadedPdfUrl, timestamp);
+                    }
                 })
-                .addOnFailureListener(e ->
-                        Toast.makeText(addpdf.this, "PDF upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(addpdf.this, "PDF upload failed due to " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void uploadPdfInfoToDb(String title, String uploadedPdfUrl, long timestamp) {
+        progressDialog.setMessage("Uploading pdf info...");
+
         String uid = firebaseAuth.getUid();
-        book bk = new book(title, selectedCategoryId, uid, timestamp
-                );
+
+        book bk = new book(title, selectedCategoryId, uid, timestamp, uploadedPdfUrl);
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Books");
-        ref.child("" + timestamp).setValue(bk)
-                .addOnSuccessListener(unused -> Toast.makeText(addpdf.this, "Uploaded successfully!", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(addpdf.this, "Failed to upload: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        ref.child("" + timestamp)
+                .setValue(bk)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        progressDialog.dismiss();
+                        Toast.makeText(addpdf.this, "Successfully uploaded...", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(addpdf.this, "Failed to upload to db due to " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void loadPdfCategories() {
@@ -119,9 +174,10 @@ public class addpdf extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(addpdf.this, "Failed to load categories", Toast.LENGTH_SHORT).show();
+
             }
         });
+
     }
 
     private String selectedCategoryId, selectedCategoryTitle;
@@ -134,10 +190,13 @@ public class addpdf extends AppCompatActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Pick Category")
-                .setItems(categoriesArray, (dialog, which) -> {
-                    selectedCategoryTitle = categoryTitleArrayList.get(which);
-                    selectedCategoryId = categoryIdArrayList.get(which);
-                    ((TextView) findViewById(R.id.categoryTv)).setText(selectedCategoryTitle);
+                .setItems(categoriesArray, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        selectedCategoryTitle = categoryTitleArrayList.get(which);
+                        selectedCategoryId = categoryIdArrayList.get(which);
+                        ((TextView) findViewById(R.id.categoryTv)).setText(selectedCategoryTitle);
+                    }
                 })
                 .show();
     }
@@ -153,10 +212,12 @@ public class addpdf extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK && requestCode == PDF_PICK_CODE) {
-            pdfUri = data.getData();
+        if (resultCode == RESULT_OK) {
+            if (requestCode == PDF_PICK_CODE) {
+                pdfUri = data.getData();
+            }
         } else {
-            Toast.makeText(this, "PDF selection canceled", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "cancelled picking pdf", Toast.LENGTH_SHORT).show();
         }
     }
 }

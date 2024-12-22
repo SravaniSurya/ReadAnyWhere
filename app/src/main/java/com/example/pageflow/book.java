@@ -1,30 +1,39 @@
 package com.example.pageflow;
 
 public class book {
-    private String id;
+    private String title;
     private String category;
-    private String uid;
+    private String uuid;
     private long timestamp;
-
+    private String url;
 
     public book() {
 
     }
 
-    public book(String id, String category, String uid, long timestamp) {
-        this.id = id;
+    public book(String id, String category, String uid, long timestamp, String url) {
+        this.title = id;
         this.category = category;
-        this.uid = uid;
+        this.uuid = uid;
         this.timestamp = timestamp;
-
+        this.url = url;
     }
 
-    public String getId() {
-        return id;
+    public String getTitle() {
+        return title;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getCategory() {
@@ -35,12 +44,12 @@ public class book {
         this.category = category;
     }
 
-    public String getUid() {
-        return uid;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public long getTimestamp() {
@@ -50,6 +59,4 @@ public class book {
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
-
-
 }

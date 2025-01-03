@@ -7,14 +7,14 @@
     >
 
 
-    <!--Toolbar-->
+
     <RelativeLayout
         android:id="@+id/toolbarRl"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
         android:background="@drawable/shape_toolbar02">
 
-        <!--Back button-->
+
         <ImageButton
             android:id="@+id/backBtn"
             android:layout_width="wrap_content"
@@ -24,7 +24,7 @@
             android:layout_marginStart="10dp"
             android:background="@android:color/transparent"/>
 
-        <!--Title-->
+
         <TextView
             android:id="@+id/titleTv"
             android:layout_width="wrap_content"
@@ -35,7 +35,7 @@
             android:layout_centerHorizontal="true"
             android:textColor="@color/white"/>
 
-        <!--Subtitle/Category of book-->
+
         <TextView
             android:id="@+id/subTitleTv"
             android:layout_width="wrap_content"
@@ -47,7 +47,7 @@
 
     </RelativeLayout>
 
-    <!--Search-->
+
 
     <EditText
         android:id="@+id/searchEt"
@@ -65,7 +65,7 @@
         android:drawablePadding="10dp"
         android:textColor="@color/black"/>
 
-    <!--Pdf List-->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/bookRv"
         android:layout_width="match_parent"

@@ -22,7 +22,7 @@
 
 
 
-            <!--Progress Bar-->
+
             <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="match_parent"

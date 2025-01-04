@@ -15,6 +15,9 @@
         android:theme="@style/Theme.PageFlow"
         tools:targetApi="31">
         <activity
+            android:name=".bookdetails"
+            android:exported="false" />
+        <activity
             android:name=".pdfeditactivity"
             android:exported="false" />
         <activity

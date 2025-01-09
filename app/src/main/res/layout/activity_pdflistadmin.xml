@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
+
 
 
 
@@ -48,31 +48,13 @@
     </RelativeLayout>
 
 
-
-    <EditText
-        android:id="@+id/searchEt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:background="@color/white"
-        android:layout_below="@id/toolbarRl"
-        android:padding="10dp"
-        android:hint="Search"
-        android:textColorHint="@color/gray02"
-        android:drawableStart="@drawable/ic_search_gray"
-        android:drawablePadding="10dp"
-        android:textColor="@color/black"/>
-
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/bookRv"
         android:layout_width="match_parent"
-        android:layout_below="@id/searchEt"
+        android:layout_below="@id/toolbarRl"
         android:layout_margin="10dp"
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/row_book_admin"/>
+        tools:listitem="@layout/row_user"/>
 
 </RelativeLayout>

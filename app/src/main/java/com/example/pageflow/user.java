@@ -73,7 +73,7 @@ public class user {
     }
 
 public String getPhotoUrl() {
-    return photoUrl;
+        return photoUrl;
 }
 
 public void setPhotoUrl(String photoUrl) {

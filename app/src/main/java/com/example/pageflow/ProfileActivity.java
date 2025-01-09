@@ -17,13 +17,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Calendar;
-import java.util.Locale;
-
 public class ProfileActivity extends AppCompatActivity {
 
     private ImageButton backBtn, profileEditBtn;
-    private TextView nameTv, accountTypeTv, memberDateTv;
+    private TextView nameTv, accountTypeTv;
     private com.google.android.material.imageview.ShapeableImageView profileIv;
 
     private FirebaseAuth firebaseAuth;
@@ -38,18 +35,15 @@ public class ProfileActivity extends AppCompatActivity {
         profileEditBtn = findViewById(R.id.profileEditBtn);
         nameTv = findViewById(R.id.nameTv);
         accountTypeTv = findViewById(R.id.accountTypeTv);
-        memberDateTv = findViewById(R.id.memberDateTv);
         profileIv = findViewById(R.id.profileIv);
+
 
         firebaseAuth = FirebaseAuth.getInstance();
 
 
         loadUserInfo();
 
-
         backBtn.setOnClickListener(v -> onBackPressed());
-
-
         profileEditBtn.setOnClickListener(v -> startActivity(new Intent(ProfileActivity.this, ProfileEditActivity.class)));
     }
 
@@ -60,37 +54,33 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadUserInfo() {
+
         String uid = firebaseAuth.getUid();
+
         if (uid == null) {
             Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
-        ref.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(uid);
+
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String name = "" + snapshot.child("firstName").getValue();
-                String profileImage = "" + snapshot.child("photoUrl").getValue();
-                String timestamp = "" + snapshot.child("timestamp").getValue();
-                String userType = "" + snapshot.child("role").getValue();
 
-                String formattedDate = "N/A";
-                if (timestamp != null && !timestamp.isEmpty() && !timestamp.equals("null")) {
-                    try {
-                        long timestampLong = Long.parseLong(timestamp);
-                        formattedDate = formatTimestamp(timestampLong);
-                    } catch (NumberFormatException e) {
-                        formattedDate = "Invalid Date";
-                    }
-                }
+                String name = snapshot.child("firstName").getValue(String.class);
+                String profileImage = snapshot.child("photoUrl").getValue(String.class);
+                String userType = snapshot.child("role").getValue(String.class);
 
-                nameTv.setText(name.isEmpty() ? "N/A" : name);
-                accountTypeTv.setText(userType.isEmpty() ? "N/A" : userType);
-                memberDateTv.setText(formattedDate);
+
+                nameTv.setText(name != null && !name.isEmpty() ? name : "N/A");
+                accountTypeTv.setText(userType != null && !userType.isEmpty() ? userType : "N/A");
+
 
                 Glide.with(ProfileActivity.this)
-                        .load(profileImage)
+                        .load(profileImage != null && !profileImage.isEmpty() ? profileImage : R.drawable.ic_person_gray)
                         .placeholder(R.drawable.ic_person_gray)
                         .into(profileIv);
             }
@@ -100,11 +90,5 @@ public class ProfileActivity extends AppCompatActivity {
                 Toast.makeText(ProfileActivity.this, "Failed to load user info", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private static String formatTimestamp(long timestamp) {
-        Calendar cal = Calendar.getInstance(Locale.ENGLISH);
-        cal.setTimeInMillis(timestamp);
-        return android.text.format.DateFormat.format("dd/MM/yyyy", cal).toString();
     }
 }

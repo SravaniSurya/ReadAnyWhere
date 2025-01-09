@@ -91,14 +91,6 @@
             android:background="@color/gray01" />
 
 
-        <TextView
-            android:id="@+id/memberDateTv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Member Since: DD/MM/YYYY"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:gravity="center"
-            android:layout_marginTop="8dp" />
+
     </LinearLayout>
 </RelativeLayout>

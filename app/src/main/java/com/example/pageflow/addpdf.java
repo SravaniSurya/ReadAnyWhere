@@ -1,6 +1,5 @@
 package com.example.pageflow;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -34,11 +33,13 @@ import java.util.ArrayList;
 public class addpdf extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
-    private ProgressDialog progressDialog;
     private ArrayList<String> categoryTitleArrayList, categoryIdArrayList;
     private Uri pdfUri = null;
 
     private static final int PDF_PICK_CODE = 1000;
+
+    private String title = "";
+    private String selectedCategoryId, selectedCategoryTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,43 +49,11 @@ public class addpdf extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         loadPdfCategories();
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Please wait");
-        progressDialog.setCanceledOnTouchOutside(false);
-
-        findViewById(R.id.backBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
-        findViewById(R.id.attachBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pdfPickIntent();
-            }
-        });
-
-        findViewById(R.id.categoryTv)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        categoryPickDialog();
-                    }
-                });
-
-        findViewById(R.id.submitBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkData();
-            }
-        });
-
-
+        findViewById(R.id.backBtn).setOnClickListener(v -> onBackPressed());
+        findViewById(R.id.attachBtn).setOnClickListener(v -> pdfPickIntent());
+        findViewById(R.id.categoryTv).setOnClickListener(v -> categoryPickDialog());
+        findViewById(R.id.submitBtn).setOnClickListener(v -> checkData());
     }
-
-    private String title = "";
 
     private void checkData() {
         title = ((EditText) findViewById(R.id.titleEt)).getText().toString().trim();
@@ -101,55 +70,38 @@ public class addpdf extends AppCompatActivity {
     }
 
     private void uploadPdfToStorage() {
-        progressDialog.setMessage("Uploading Pdf...");
-        progressDialog.show();
+        Toast.makeText(this, "Uploading PDF...", Toast.LENGTH_SHORT).show();
 
         long timestamp = System.currentTimeMillis();
-
         String filePathAndName = "Books/" + timestamp;
         StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathAndName);
+
         storageReference.putFile(pdfUri)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                        while (!uriTask.isSuccessful()) ;
-                        String uploadedPdfUrl = "" + uriTask.getResult();
-                        uploadPdfInfoToDb(title, uploadedPdfUrl, timestamp);
-                    }
+                .addOnSuccessListener(taskSnapshot -> {
+                    Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                    while (!uriTask.isSuccessful()) ;
+                    String uploadedPdfUrl = "" + uriTask.getResult();
+                    uploadPdfInfoToDb(title, uploadedPdfUrl, timestamp);
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        progressDialog.dismiss();
-                        Toast.makeText(addpdf.this, "PDF upload failed due to " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    Toast.makeText(addpdf.this, "PDF upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
     private void uploadPdfInfoToDb(String title, String uploadedPdfUrl, long timestamp) {
-        progressDialog.setMessage("Uploading pdf info...");
+        Toast.makeText(this, "Uploading PDF info...", Toast.LENGTH_SHORT).show();
 
         String uid = firebaseAuth.getUid();
-
         book bk = new book(title, selectedCategoryId, uid, timestamp, uploadedPdfUrl);
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Books");
         ref.child("" + timestamp)
                 .setValue(bk)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        progressDialog.dismiss();
-                        Toast.makeText(addpdf.this, "Successfully uploaded...", Toast.LENGTH_SHORT).show();
-                    }
+                .addOnSuccessListener(unused -> {
+                    Toast.makeText(addpdf.this, "Successfully uploaded", Toast.LENGTH_SHORT).show();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        progressDialog.dismiss();
-                        Toast.makeText(addpdf.this, "Failed to upload to db due to " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+                .addOnFailureListener(e -> {
+                    Toast.makeText(addpdf.this, "Failed to upload to DB: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -174,29 +126,20 @@ public class addpdf extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Toast.makeText(addpdf.this, "Failed to load categories", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
-    private String selectedCategoryId, selectedCategoryTitle;
-
     private void categoryPickDialog() {
-        String[] categoriesArray = new String[categoryTitleArrayList.size()];
-        for (int i = 0; i < categoryTitleArrayList.size(); i++) {
-            categoriesArray[i] = categoryTitleArrayList.get(i);
-        }
+        String[] categoriesArray = categoryTitleArrayList.toArray(new String[0]);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Pick Category")
-                .setItems(categoriesArray, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        selectedCategoryTitle = categoryTitleArrayList.get(which);
-                        selectedCategoryId = categoryIdArrayList.get(which);
-                        ((TextView) findViewById(R.id.categoryTv)).setText(selectedCategoryTitle);
-                    }
+                .setItems(categoriesArray, (dialog, which) -> {
+                    selectedCategoryTitle = categoryTitleArrayList.get(which);
+                    selectedCategoryId = categoryIdArrayList.get(which);
+                    ((TextView) findViewById(R.id.categoryTv)).setText(selectedCategoryTitle);
                 })
                 .show();
     }
@@ -205,19 +148,18 @@ public class addpdf extends AppCompatActivity {
         Intent intent = new Intent();
         intent.setType("application/pdf");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Pdf"), PDF_PICK_CODE);
+        startActivityForResult(Intent.createChooser(intent, "Select PDF"), PDF_PICK_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK) {
-            if (requestCode == PDF_PICK_CODE) {
-                pdfUri = data.getData();
-            }
+        if (resultCode == RESULT_OK && requestCode == PDF_PICK_CODE && data != null) {
+            pdfUri = data.getData();
+            Toast.makeText(this, "PDF selected", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "cancelled picking pdf", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Cancelled picking PDF", Toast.LENGTH_SHORT).show();
         }
     }
 }

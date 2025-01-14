@@ -18,10 +18,10 @@
             android:name=".bookdetails"
             android:exported="false" />
         <activity
-            android:name=".pdfeditactivity"
+            android:name=".comment"
             android:exported="false" />
         <activity
-            android:name=".pdfdetailedactivity"
+            android:name=".adaptercomment"
             android:exported="false" />
         <activity
             android:name=".addpdf"

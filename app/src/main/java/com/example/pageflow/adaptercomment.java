@@ -1,5 +1,6 @@
 package com.example.pageflow;
 
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.LayoutInflater;
@@ -110,13 +111,16 @@ public class adaptercomment extends RecyclerView.Adapter<adaptercomment.HolderCo
     private void loadUserDetails(comment modelComment, HolderComment holder) {
         String uid = modelComment.getUserId();
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        Toast.makeText(context.getApplicationContext(), uid.toString(), Toast.LENGTH_SHORT).show();
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
         ref.child(uid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        String name = "" + snapshot.child("name").getValue();
-                        String profileImage = "" + snapshot.child("profileImage").getValue();
+                        String name = "" + snapshot.child("firstName").getValue();
+                        String profileImage = "" + snapshot.child("photoUrl" +
+                                "").getValue();
                         holder.nameTv.setText(name);
                         try {
                             Glide.with(context)

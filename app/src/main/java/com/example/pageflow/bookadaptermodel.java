@@ -1,8 +1,10 @@
 package com.example.pageflow;
 
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,36 +45,51 @@ public class bookadaptermodel extends RecyclerView.Adapter<bookadaptermodel.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         book model = categoryArrayList.get(position);
-
         String title = model.getCategory();
-
-        holder.categoryTv.setText(title != null && !title.isEmpty() ? title : "No Title Available");
+        holder.categoryTv.setText(title != null ? title : "No Title Available");
 
         holder.deleteBtn.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("Delete")
-                    .setMessage("Are you sure you want to delete this book?")
-                    .setPositiveButton("Confirm", (dialog, which) -> deleteBook(model))
-                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                    .show();
+            if (model != null) {
+                new AlertDialog.Builder(context)
+                        .setTitle("Delete")
+                        .setMessage("Are you sure you want to delete this book?")
+                        .setPositiveButton("Confirm", (dialog, which) -> deleteBook(model))
+                        .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                        .show();
+            }
         });
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, pdflistadmin.class);
-            intent.putExtra("categoryId", String.valueOf(model.getTimestamp()));
-            intent.putExtra("categoryTitle", title);
-            context.startActivity(intent);
+            if (model != null) {
+                Intent intent = new Intent(context, pdflistadmin.class);
+                intent.putExtra("categoryId", String.valueOf(model.getTimestamp()));
+                intent.putExtra("categoryTitle", title);
+                context.startActivity(intent);
+            }
         });
     }
 
+
     private void deleteBook(book model) {
-        String id = model.getTitle();
+        String id = model.getUuid();
+        if (id == null || id.isEmpty()) {
+            Toast.makeText(context, "Invalid book ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Categories");
         ref.child(id)
                 .removeValue()
-                .addOnSuccessListener(unused -> Toast.makeText(context, "Deleted successfully", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(context, "Failed to delete: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnSuccessListener(unused -> {
+                    Toast.makeText(context, "Deleted successfully", Toast.LENGTH_SHORT).show();
+                    Log.d("DeleteBook", "Successfully deleted: " + id);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Failed to delete: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("DeleteBook", "Error deleting book: " + id, e);
+                });
     }
+
+
 
     @Override
     public int getItemCount() {

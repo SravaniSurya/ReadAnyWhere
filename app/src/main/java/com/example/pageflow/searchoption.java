@@ -5,8 +5,7 @@ import java.util.ArrayList;
 
 public class searchoption extends Filter {
 
-    private ArrayList<
-            book> originalList;
+    private ArrayList<book> originalList;
     private bookadaptermodel adapter;
 
     public searchoption(ArrayList<book> originalList, bookadaptermodel adapter) {
